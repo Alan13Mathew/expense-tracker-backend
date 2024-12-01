@@ -40,8 +40,8 @@ connectDB()
 
 
 // API Routes
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/expenses', require('./routes/expense'));
+app.use('/auth', require('./routes/auth'));
+app.use('/expenses', require('./routes/expense'));
 
 
 
