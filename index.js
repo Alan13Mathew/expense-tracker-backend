@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const mongoose = require('mongoose');
+const { connectDB } = require('./db.js');
 
 const app = express();
 
@@ -26,9 +26,26 @@ app.use((req, res, next) => {
   next();
 });
 
+connectDB()
+  .then(() => {
+    console.log('Database connection ready');
+    // Start your application logic here
+    const port = process.env.PORT || 3000;
+    app.listen(port, () => console.log(`Server running on port ${port}`));
+  })
+  .catch(error => {
+    console.error('Database connection failed:', error);
+    process.exit(1);
+  });
+
+
 // API Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/expenses', require('./routes/expense'));
+
+
+
+
 
 //backend token validation endpoint
 app.post('/auth/validate-token', (req, res) => {
@@ -42,10 +59,6 @@ app.post('/auth/validate-token', (req, res) => {
 });
 
 
-// Database connection
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('MongoDB Connected Successfully'))
-  .catch(err => console.error('MongoDB Connection Error:', err));
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Server running on port ${port}`));
+
+
