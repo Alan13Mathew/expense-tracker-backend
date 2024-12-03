@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
+const Expense = require('../models/Expense')
 const expenseController = require('../controllers/expenseController')
 
 router.use((req, res, next) => {
@@ -19,6 +20,7 @@ router.get('/', auth, async (req, res) => {
   
 router.get('/me', expenseController.getExpenses);
 router.post('/', expenseController.addExpense);
+router.post('/bulk',expenseController.bulkExpense)
 router.delete('/:id', expenseController.deleteExpense);
 
 module.exports = router;
