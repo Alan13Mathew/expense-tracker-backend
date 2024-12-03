@@ -29,6 +29,42 @@ exports.addExpense = async (req, res) => {
   }
 };
 
+exports.bulkExpense = async (req, res) => {
+  try {
+    const transactions = req.body;
+    
+    const user = await User.findById(req.user.id)
+    
+    const formattedTransactions = transactions.map(transaction => ({
+      description: transaction.description,
+      amount: Number(transaction.amount),
+      category: transaction.category,
+      type: transaction.type,
+      date: new Date(transaction.date)
+    }));
+
+    
+
+    user.expenses.push(...formattedTransactions);
+    
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Transactions imported successfully',
+      count: formattedTransactions.length
+    });
+  } catch (error) {
+    console.log('Bulk import error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to import transactions',
+      error: error.message
+    });
+  }
+};
+
+
 exports.getExpenses = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
